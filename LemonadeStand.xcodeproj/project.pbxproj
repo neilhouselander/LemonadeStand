@@ -10,8 +10,10 @@
 		C12729AA1C974B5E000A684A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12729A91C974B5E000A684A /* AppDelegate.swift */; };
 		C12729AC1C974B5E000A684A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12729AB1C974B5E000A684A /* ViewController.swift */; };
 		C12729AF1C974B5E000A684A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12729AD1C974B5E000A684A /* Main.storyboard */; };
-		C12729B11C974B5E000A684A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C12729B01C974B5E000A684A /* Assets.xcassets */; };
 		C12729B41C974B5E000A684A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12729B21C974B5E000A684A /* LaunchScreen.storyboard */; };
+		C12729BC1C975632000A684A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C12729BB1C975632000A684A /* Assets.xcassets */; };
+		C1B3E11F1C9AC56500B824F8 /* Supplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3E11E1C9AC56500B824F8 /* Supplies.swift */; };
+		C1B3E1211C9AC61D00B824F8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3E1201C9AC61D00B824F8 /* Price.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,9 +21,11 @@
 		C12729A91C974B5E000A684A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C12729AB1C974B5E000A684A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C12729AE1C974B5E000A684A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		C12729B01C974B5E000A684A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C12729B31C974B5E000A684A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C12729B51C974B5E000A684A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C12729BB1C975632000A684A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C1B3E11E1C9AC56500B824F8 /* Supplies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Supplies.swift; sourceTree = "<group>"; };
+		C1B3E1201C9AC61D00B824F8 /* Price.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,8 +60,10 @@
 			children = (
 				C12729A91C974B5E000A684A /* AppDelegate.swift */,
 				C12729AB1C974B5E000A684A /* ViewController.swift */,
+				C1B3E1201C9AC61D00B824F8 /* Price.swift */,
+				C1B3E11E1C9AC56500B824F8 /* Supplies.swift */,
 				C12729AD1C974B5E000A684A /* Main.storyboard */,
-				C12729B01C974B5E000A684A /* Assets.xcassets */,
+				C12729BB1C975632000A684A /* Assets.xcassets */,
 				C12729B21C974B5E000A684A /* LaunchScreen.storyboard */,
 				C12729B51C974B5E000A684A /* Info.plist */,
 			);
@@ -124,7 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C12729B41C974B5E000A684A /* LaunchScreen.storyboard in Resources */,
-				C12729B11C974B5E000A684A /* Assets.xcassets in Resources */,
+				C12729BC1C975632000A684A /* Assets.xcassets in Resources */,
 				C12729AF1C974B5E000A684A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,6 +143,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C12729AC1C974B5E000A684A /* ViewController.swift in Sources */,
+				C1B3E1211C9AC61D00B824F8 /* Price.swift in Sources */,
+				C1B3E11F1C9AC56500B824F8 /* Supplies.swift in Sources */,
 				C12729AA1C974B5E000A684A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,6 +295,7 @@
 				C12729BA1C974B5E000A684A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
