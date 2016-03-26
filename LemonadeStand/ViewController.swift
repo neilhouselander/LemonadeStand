@@ -15,7 +15,7 @@
 //daily report labels set up
 //daily report labels animation
 //add these functions to game
-//ideally game over test triggers an alert which when dismissed gives summary
+
 
 
 
@@ -96,10 +96,13 @@ class ViewController: UIViewController {
     let kSummaryViewFont = UIFont(name: "MarkerFelt-Wide", size: 20)
     let kEighth = CGFloat(1.0/8.0)
     let kHalf = CGFloat(1.0/2.0)
+    let kFourteenth = CGFloat(1.0/14.0)
+    let kSixteenth = CGFloat(1.0/16.0)
+    let salePrice = 2
     
     //MARK: Properties: initial values
     
-    var supplies = Supplies(aMoney: 10, aLemons: 1, aIceCubes: 1)
+    var supplies = Supplies(aMoney: 10, aLemons: 0, aIceCubes: 0)
     let price = Price()
     
     var lemonsToPurchase = 0
@@ -116,6 +119,7 @@ class ViewController: UIViewController {
     var todaysProfit = 0
     var todaysMix = ""
     var glassesSoldToday = 0
+    var todaysSpend = 0
     
     //total stats
     var totalProfit = 0
@@ -126,19 +130,14 @@ class ViewController: UIViewController {
     var totalCustomersMid = 0
     var totalGlassesSold = 0
     
-    
-    
+    //other controls
+    var gameOverAlertController: UIAlertController?
     
     //MARK: Main functions
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.roundTheCorners()
-        
         self.updateMainView()
-        
-        //self.gameOverSummaryAndReset()
-        
         
     }
     
@@ -162,6 +161,7 @@ class ViewController: UIViewController {
             self.lemonsToPurchase -= 1
             self.supplies.money += self.price.lemon
             self.supplies.lemons -= 1
+            self.todaysSpend -= self.price.lemon
             self.updateMainView()
         }
         else {
@@ -177,11 +177,13 @@ class ViewController: UIViewController {
             self.lemonsToPurchase += 1
             self.supplies.money -= self.price.lemon
             self.supplies.lemons += 1
+            self.todaysSpend += self.price.lemon
             self.updateMainView()
         }
         else if (self.checkForGameOver()) {
             print("Game over")
-            self.gameOverSummaryAndReset()
+            self.gameOverAlertView()
+            
         }
         else {
             self.showAlertWithText("Its all about the money...", message: "You don't have enough money to buy that lemon!")
@@ -195,6 +197,7 @@ class ViewController: UIViewController {
             self.iceCubesToPurchase -= 1
             self.supplies.money += self.price.iceCube
             self.supplies.iceCubes -= 1
+            self.todaysSpend -= self.price.iceCube
             self.updateMainView()
         }
         else {
@@ -210,11 +213,13 @@ class ViewController: UIViewController {
             self.iceCubesToPurchase += 1
             self.supplies.money -= self.price.iceCube
             self.supplies.iceCubes += 1
+            self.todaysSpend += self.price.iceCube
             self.updateMainView()
         }
         else if (self.checkForGameOver()) {
            print ("Game Over")
-            self.gameOverSummaryAndReset()
+            self.gameOverAlertView()
+            
         }
         else {
             self.showAlertWithText("Ice, ice baby", message: "You don't have enough money to buy that ice cube!")
@@ -234,9 +239,7 @@ class ViewController: UIViewController {
         else {
             showAlertWithText(message: "No lemons to take out")
         }
-        
-        
-    }
+     }
     
     @IBAction func addLemonsToMixButtonPressed(sender: UIButton) {
         print("add lemon to mix pressed")
@@ -291,7 +294,10 @@ class ViewController: UIViewController {
             self.endOfGameSummaryView.removeFromSuperview()
         }
         
-        
+        if self.endOfDaySummaryView != nil {
+            self.endOfDaySummaryView.removeFromSuperview()
+        }
+  
         self.customers = Int(arc4random_uniform(UInt32(kMaxNumberOfCustomers)) + 1)
         
         self.numberOfCustomersWeak = 0
@@ -299,7 +305,6 @@ class ViewController: UIViewController {
         self.numberOfCustomersStrong = 0
         self.todaysProfit = 0
         self.glassesSoldToday = 0
-        
         
         if self.customers == 1 {
             print("Just \(customers) customer today")
@@ -328,9 +333,10 @@ class ViewController: UIViewController {
             self.lemonsToMix = 0
             self.iceCubesToMix = 0
             
-            self.updateMainView()
+            
         }
         //add todays stats to total stats
+        self.todaysProfit = (self.glassesSoldToday * self.salePrice) - self.todaysSpend
         self.totalProfit += self.todaysProfit
         self.totalCustomers += self.customers
         self.totalCustomersWeak += self.numberOfCustomersWeak
@@ -338,6 +344,8 @@ class ViewController: UIViewController {
         self.totalCustomersStrong += self.numberOfCustomersStrong
         print("Total profit so far: \(self.totalProfit)")
         self.totalGlassesSold += self.glassesSoldToday
+        
+        self.endOfDaySummary()
         
     }
     
@@ -397,19 +405,19 @@ class ViewController: UIViewController {
             
             //compare to see if paid or not paid
             if customerTaste < 0.4 && lemonadeRatio > 1 {
-                supplies.money += 1
+                supplies.money += self.salePrice
                 self.todaysProfit += 1
                 self.glassesSoldToday += 1
                 print("Customer preferred strong, mix was strong : Paid")
             }
             else if customerTaste > 0.6 && lemonadeRatio < 1 {
-                supplies.money += 1
+                supplies.money += self.salePrice
                 self.todaysProfit += 1
                 self.glassesSoldToday += 1
                 print("Customer preferred weak, mix was weak: Paid")
             }
             else if customerTaste <= 0.6 && customerTaste >= 0.4 && lemonadeRatio == 1 {
-                supplies.money += 1
+                supplies.money += self.salePrice
                 self.todaysProfit += 1
                 self.glassesSoldToday += 1
                 print("Customer preferred equal mix, mix was equal: Paid")
@@ -440,11 +448,20 @@ class ViewController: UIViewController {
     
     func hardReset () {
         self.supplies = Supplies(aMoney: 10, aLemons: 1, aIceCubes: 1)
+        //daily
         self.customers = 0
         self.numberOfCustomersWeak = 0
         self.numberOfCustomersStrong = 0
         self.numberOfCustomersMid = 0
         self.todaysProfit = 0
+        self.glassesSoldToday = 0
+       
+        
+        //total
+        self.totalCustomers = 0
+        self.totalCustomersWeak = 0
+        self.totalCustomersStrong = 0
+        self.totalCustomersMid = 0
         self.totalProfit = 0
         self.dayNumber = 0
         self.totalGlassesSold = 0
@@ -472,8 +489,6 @@ class ViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleTapGesture(_:)))
         self.endOfGameSummaryViewInner.addGestureRecognizer(tapGesture)
         
- 
-        
     }
     
     func handleTapGesture (tapGesture: (UITapGestureRecognizer)) {
@@ -483,8 +498,18 @@ class ViewController: UIViewController {
             self.endOfGameSummaryView.center = CGPoint(x: self.view.bounds.width * self.kHalf, y: self.endOfGameSummaryView.bounds.height + self.view.bounds.height)
             }, completion: nil)
         self.hardReset()
-        
-
+  
+    }
+    
+    func handleDayEndTapGesture (tapGesture: (UITapGestureRecognizer)) {
+        print("tap")
+        //dismiss view
+        UIView.animateWithDuration(0.5, delay: 0.0, options: [], animations: {
+            self.endOfDaySummaryView.center = CGPoint(x: self.view.bounds.width * self.kHalf, y: self.endOfDaySummaryView.bounds.height + self.view.bounds.height)
+            }, completion: nil)
+        self.todaysSpend = 0 //need to clear todays spend here as anywhere else doesn't work
+        self.updateMainView()
+    
     }
     
     
@@ -506,7 +531,6 @@ class ViewController: UIViewController {
             self.endOfGameSummaryView.center = CGPoint(x: self.view.bounds.width * 0.5, y: self.view.bounds.height * 0.5)
             }, completion: nil)
         
-        
     }
     
     
@@ -522,11 +546,15 @@ class ViewController: UIViewController {
         self.endOfGameSummaryViewInner.addSubview(self.gameOverTitle)
         
         self.youLastedLabel = UILabel()
-        self.youLastedLabel.text = "You lasted for \(self.dayNumber) days"
+        if self.dayNumber == 1 {
+            self.youLastedLabel.text = "You lasted for \(self.dayNumber) day"
+        }
+        else {
+            self.youLastedLabel.text = "You lasted for \(self.dayNumber) days"
+        }
         self.youLastedLabel.textColor = kMainBlueColour
         self.youLastedLabel.font = kSummaryViewFont
         self.youLastedLabel.sizeToFit()
-        //self.youLastedLabel.center = CGPoint(x: self.endOfGameSummaryViewInner.bounds.width * kHalf , y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 2))
         self.youLastedLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 2))
         self.youLastedLabel.textAlignment = NSTextAlignment.Left
         self.endOfGameSummaryViewInner.addSubview(self.youLastedLabel)
@@ -536,7 +564,6 @@ class ViewController: UIViewController {
         self.youHadCustomersLabel.textColor = kMainBlueColour
         self.youHadCustomersLabel.font = kSummaryViewFont
         self.youHadCustomersLabel.sizeToFit()
-        //self.youHadCustomersLabel.center = CGPoint(x: self.endOfGameSummaryViewInner.bounds.width * kHalf, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 3))
         self.youHadCustomersLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 3))
         self.youHadCustomersLabel.textAlignment = NSTextAlignment.Left
         self.endOfGameSummaryViewInner.addSubview(self.youHadCustomersLabel)
@@ -546,23 +573,26 @@ class ViewController: UIViewController {
         self.youSoldGlassesLabel.textColor = kMainBlueColour
         self.youSoldGlassesLabel.font = kSummaryViewFont
         self.youSoldGlassesLabel.sizeToFit()
-        //self.youSoldGlassesLabel.center = CGPoint(x: self.endOfGameSummaryViewInner.bounds.width * kHalf, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 4))
         self.youSoldGlassesLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 4))
         self.youSoldGlassesLabel.textAlignment = NSTextAlignment.Left
         self.endOfGameSummaryViewInner.addSubview(self.youSoldGlassesLabel)
         
         self.youMadeProfitLabel = UILabel()
-        self.youMadeProfitLabel.text = "You made a total of $\(self.totalProfit) profit"
+        if self.totalProfit >= 0 {
+           self.youMadeProfitLabel.text = "You made a total of $\(self.totalProfit) profit"
+        }
+        else {
+            self.youMadeProfitLabel.text = "You made a loss of $\(abs(self.totalProfit))"
+        }
         self.youMadeProfitLabel.textColor = kMainBlueColour
         self.youMadeProfitLabel.font = kSummaryViewFont
         self.youMadeProfitLabel.sizeToFit()
-        //self.youMadeProfitLabel.center = CGPoint(x: self.endOfGameSummaryViewInner.bounds.width * kHalf, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 5))
         self.youMadeProfitLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfGameSummaryViewInner.bounds.height * (kEighth * 5))
         self.youMadeProfitLabel.textAlignment = NSTextAlignment.Left
         self.endOfGameSummaryViewInner.addSubview(self.youMadeProfitLabel)
         
         //then animate
-            UIView.animateWithDuration(1.5, delay: 2.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+        UIView.animateWithDuration(1.5, delay: 2.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
             self.youLastedLabel.center = CGPoint(x: self.endOfGameSummaryViewInner.bounds.width * self.kHalf , y: self.endOfGameSummaryViewInner.bounds.height * (self.kEighth * 2))
             }, completion: nil)
         
@@ -584,22 +614,166 @@ class ViewController: UIViewController {
         self.setUpDailyReportViews()
         self.setUpDailyReportLabels()
         //touch to dismiss or a button to dismiss ready for next day
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleDayEndTapGesture(_:)))
+        self.endOfDaySummaryViewInner.addGestureRecognizer(tapGesture)
         
         
     }
     
     func setUpDailyReportViews() {
         //set up outer view
-        //set up inner view
-        //animate outer view
+        self.endOfDaySummaryView = UIView(frame: CGRect(x: self.view.bounds.origin.x + 10, y: self.view.bounds.height + 100, width: self.view.bounds.width - 20, height: self.view.bounds.height * 0.6))
+        self.endOfDaySummaryView.backgroundColor = kMainOrangeColour
+        self.endOfDaySummaryView.layer.cornerRadius = 10
+        self.view.addSubview(self.endOfDaySummaryView)
         
+        //inner view sits on outer view
+        self.endOfDaySummaryViewInner = UIView(frame: CGRect(x: self.view.bounds.origin.x + 20, y: self.view.bounds.origin.y + 20, width: self.endOfDaySummaryView.bounds.width - 40, height: self.endOfDaySummaryView.bounds.height - 40))
+        self.endOfDaySummaryViewInner.backgroundColor = kMainYellowColour
+        self.endOfDaySummaryViewInner.layer.cornerRadius = 10.0
+        self.endOfDaySummaryView.addSubview(self.endOfDaySummaryViewInner)
         
+        //animate the outer view the inner stuff will go with it
+        UIView.animateWithDuration(1.5, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            self.endOfDaySummaryView.center = CGPoint(x: self.view.bounds.width * 0.5, y: self.view.bounds.height * 0.5)
+            }, completion: nil)
         
     }
     
     func setUpDailyReportLabels() {
         //add each label
+        self.dailyReportTitle = UILabel()
+        self.dailyReportTitle.text = "Day \(self.dayNumber) is done"
+        self.dailyReportTitle.textColor = kMainBlueColour
+        self.dailyReportTitle.font = UIFont(name: "MarkerFelt-Wide", size: 25)
+        self.dailyReportTitle.sizeToFit()
+        self.dailyReportTitle.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.origin.y + 15)
+        self.dailyReportTitle.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.dailyReportTitle)
+        
+        self.numberOfCustomersTodayLabel = UILabel()
+        if self.customers == 1 {
+            self.numberOfCustomersTodayLabel.text = "You had \(self.customers) customer today"
+        }
+        else {
+            self.numberOfCustomersTodayLabel.text = "You had \(self.customers) customers today"
+        }
+        self.numberOfCustomersTodayLabel.textColor = kMainBlueColour
+        self.numberOfCustomersTodayLabel.font = kSummaryViewFont
+        self.numberOfCustomersTodayLabel.sizeToFit()
+        self.numberOfCustomersTodayLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (kSixteenth * 2) + 5)
+        self.numberOfCustomersTodayLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.numberOfCustomersTodayLabel)
+        
+        self.numberGlassesSoldLabel = UILabel()
+        if self.glassesSoldToday == 1 {
+            self.numberGlassesSoldLabel.text = "You sold \(self.glassesSoldToday) glass"
+        }
+        else {
+            self.numberGlassesSoldLabel.text = "You sold \(self.glassesSoldToday) glasses"
+        }
+        self.numberGlassesSoldLabel.textColor = kMainBlueColour
+        self.numberGlassesSoldLabel.font = kSummaryViewFont
+        self.numberGlassesSoldLabel.sizeToFit()
+        self.numberGlassesSoldLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 4))
+        self.numberGlassesSoldLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.numberGlassesSoldLabel)
+        
+        self.typeLemonadeMadeTodayLabel = UILabel()
+        self.typeLemonadeMadeTodayLabel.text = "Todays mix was \(todaysMix)"
+        self.typeLemonadeMadeTodayLabel.textColor = kMainBlueColour
+        self.typeLemonadeMadeTodayLabel.font = kSummaryViewFont
+        self.typeLemonadeMadeTodayLabel.sizeToFit()
+        self.typeLemonadeMadeTodayLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 6))
+        self.typeLemonadeMadeTodayLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.typeLemonadeMadeTodayLabel)
+        
+        self.numberCustomerLikedStrongTodayLabel = UILabel()
+        if self.numberOfCustomersStrong == 1 {
+            self.numberCustomerLikedStrongTodayLabel.text = "\(self.numberOfCustomersStrong) customer liked it strong"
+        }
+        else {
+             self.numberCustomerLikedStrongTodayLabel.text = "\(self.numberOfCustomersStrong) customers liked it strong"
+        }
+        self.numberCustomerLikedStrongTodayLabel.textColor = kMainBlueColour
+        self.numberCustomerLikedStrongTodayLabel.font = kSummaryViewFont
+        self.numberCustomerLikedStrongTodayLabel.sizeToFit()
+        self.numberCustomerLikedStrongTodayLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (kSixteenth * 8))
+        self.numberCustomerLikedStrongTodayLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.numberCustomerLikedStrongTodayLabel)
+        
+        self.numberCustomersLikedWeakTodayLabel = UILabel()
+        if self.numberOfCustomersWeak == 1 {
+           self.numberCustomersLikedWeakTodayLabel.text = "\(self.numberOfCustomersWeak) customer liked it weak"
+        }
+        else {
+            self.numberCustomersLikedWeakTodayLabel.text = "\(self.numberOfCustomersWeak) customers liked it weak"
+        }
+        self.numberCustomersLikedWeakTodayLabel.textColor = kMainBlueColour
+        self.numberCustomersLikedWeakTodayLabel.font = kSummaryViewFont
+        self.numberCustomersLikedWeakTodayLabel.sizeToFit()
+        self.numberCustomersLikedWeakTodayLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (kSixteenth * 10))
+        self.numberCustomersLikedWeakTodayLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.numberCustomersLikedWeakTodayLabel)
+        
+        self.numberCustomersLikedBalancedTodayLabel = UILabel()
+        if self.numberOfCustomersMid == 1 {
+            self.numberCustomersLikedBalancedTodayLabel.text = "\(self.numberOfCustomersMid) customer liked it balanced"
+        }
+        else {
+            self.numberCustomersLikedBalancedTodayLabel.text = "\(self.numberOfCustomersMid) customers liked it balanced"
+        }
+        self.numberCustomersLikedBalancedTodayLabel.textColor = kMainBlueColour
+        self.numberCustomersLikedBalancedTodayLabel.font = kSummaryViewFont
+        self.numberCustomersLikedBalancedTodayLabel.sizeToFit()
+        self.numberCustomersLikedBalancedTodayLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (kSixteenth * 12))
+        self.numberCustomersLikedBalancedTodayLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.numberCustomersLikedBalancedTodayLabel)
+        
+        self.totalProfitLabel = UILabel()
+        if self.todaysProfit >= 0 {
+            self.totalProfitLabel.text = "Today you made $\(self.todaysProfit)"
+        }
+        else {
+            self.totalProfitLabel.text = "Today you lost $\(abs(self.todaysProfit))"
+        }
+        self.totalProfitLabel.textColor = kMainBlueColour
+        self.totalProfitLabel.font = kSummaryViewFont
+        self.totalProfitLabel.sizeToFit()
+        self.totalProfitLabel.center = CGPoint(x: self.view.bounds.width + 100, y: self.endOfDaySummaryViewInner.bounds.height * (kSixteenth * 14))
+        self.totalProfitLabel.textAlignment = NSTextAlignment.Center
+        self.endOfDaySummaryViewInner.addSubview(self.totalProfitLabel)
+        
+        
         //animate
+        
+        UIView.animateWithDuration(1.5, delay: 2.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            self.numberOfCustomersTodayLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 2) + 5)
+            }, completion: nil)
+        
+        UIView.animateWithDuration(1.5, delay: 2.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+           self.numberGlassesSoldLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 4))
+            }, completion: nil)
+        
+        UIView.animateWithDuration(1.5, delay: 3.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            self.typeLemonadeMadeTodayLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 6))
+            }, completion: nil)
+        
+        UIView.animateWithDuration(1.5, delay: 3.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            self.numberCustomerLikedStrongTodayLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 8))
+            }, completion: nil)
+        
+        UIView.animateWithDuration(1.5, delay: 4.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            self.numberCustomersLikedWeakTodayLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 10))
+            }, completion: nil)
+        
+        UIView.animateWithDuration(1.5, delay: 4.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+             self.numberCustomersLikedBalancedTodayLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 12))
+            }, completion: nil)
+
+        UIView.animateWithDuration(1.5, delay: 5.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: [], animations: {
+            self.totalProfitLabel.center = CGPoint(x: self.endOfDaySummaryViewInner.bounds.width * self.kHalf, y: self.endOfDaySummaryViewInner.bounds.height * (self.kSixteenth * 14))
+            }, completion: nil)
         
     }
     
@@ -642,7 +816,16 @@ class ViewController: UIViewController {
         self.containerFourView.layer.cornerRadius = 10
     }
     
-    
+    //gameover put up an alert view to informuser the game is done
+    func gameOverAlertView () {
+        self.gameOverAlertController = UIAlertController(title: "Game Over", message: "Not enough supplies or cash, or both!", preferredStyle: UIAlertControllerStyle.Alert)
+        let alertAction = UIAlertAction(title: "Summary", style: UIAlertActionStyle.Default) { (action) in
+            print("Summary please")
+            self.gameOverSummaryAndReset()
+        }
+        self.gameOverAlertController?.addAction(alertAction)
+        self.presentViewController(self.gameOverAlertController!, animated: true, completion: nil)
+    }
     
     
 }
