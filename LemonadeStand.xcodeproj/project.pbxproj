@@ -12,6 +12,7 @@
 		C12729AF1C974B5E000A684A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12729AD1C974B5E000A684A /* Main.storyboard */; };
 		C12729B41C974B5E000A684A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C12729B21C974B5E000A684A /* LaunchScreen.storyboard */; };
 		C12729BC1C975632000A684A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C12729BB1C975632000A684A /* Assets.xcassets */; };
+		C14F35EA1CA9353B00D2664B /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = C14F35E91CA9353B00D2664B /* Weather.swift */; };
 		C1B3E11F1C9AC56500B824F8 /* Supplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3E11E1C9AC56500B824F8 /* Supplies.swift */; };
 		C1B3E1211C9AC61D00B824F8 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B3E1201C9AC61D00B824F8 /* Price.swift */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,7 @@
 		C12729B31C974B5E000A684A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C12729B51C974B5E000A684A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C12729BB1C975632000A684A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C14F35E91CA9353B00D2664B /* Weather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		C1B3E11E1C9AC56500B824F8 /* Supplies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Supplies.swift; sourceTree = "<group>"; };
 		C1B3E1201C9AC61D00B824F8 /* Price.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +62,7 @@
 			children = (
 				C12729A91C974B5E000A684A /* AppDelegate.swift */,
 				C12729AB1C974B5E000A684A /* ViewController.swift */,
+				C14F35E91CA9353B00D2664B /* Weather.swift */,
 				C1B3E1201C9AC61D00B824F8 /* Price.swift */,
 				C1B3E11E1C9AC56500B824F8 /* Supplies.swift */,
 				C12729AD1C974B5E000A684A /* Main.storyboard */,
@@ -146,6 +149,7 @@
 				C1B3E1211C9AC61D00B824F8 /* Price.swift in Sources */,
 				C1B3E11F1C9AC56500B824F8 /* Supplies.swift in Sources */,
 				C12729AA1C974B5E000A684A /* AppDelegate.swift in Sources */,
+				C14F35EA1CA9353B00D2664B /* Weather.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +262,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = LemonadeStand/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = House.LemonadeStand;
@@ -269,6 +274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = LemonadeStand/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = House.LemonadeStand;
